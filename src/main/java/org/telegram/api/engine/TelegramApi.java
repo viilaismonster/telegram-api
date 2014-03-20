@@ -224,10 +224,10 @@ public class TelegramApi {
     // Basic sync and async methods
 
     private <T extends TLObject> void doRpcCall(TLMethod<T> method, int timeout, RpcCallback<T> callback, int destDc) {
-        doRpcCall(method, timeout, callback, destDc, true);
+        doRpcCallEndPoint(method, timeout, callback, destDc, true);
     }
 
-    private <T extends TLObject> void doRpcCall(TLMethod<T> method, int timeout, RpcCallback<T> callback, int destDc,
+    public <T extends TLObject> void doRpcCallEndPoint(TLMethod<T> method, int timeout, RpcCallback<T> callback, int destDc,
                                                 boolean authRequired) {
         if (isClosed) {
             if (callback != null) {
@@ -281,7 +281,7 @@ public class TelegramApi {
         final boolean[] completed = new boolean[1];
         completed[0] = false;
 
-        doRpcCall(method, timeout, new RpcCallback<T>() {
+        doRpcCallEndPoint(method, timeout, new RpcCallback<T>() {
             @Override
             public void onResult(T result) {
                 synchronized (waitObj) {
@@ -392,7 +392,7 @@ public class TelegramApi {
     }
 
     public <T extends TLObject> void doRpcCallNonAuth(TLMethod<T> method, int timeout, RpcCallback<T> callback) {
-        doRpcCall(method, timeout, callback, 0, false);
+        doRpcCallEndPoint(method, timeout, callback, 0, false);
     }
 
     public boolean doSaveFilePart(long _fileId, int _filePart, byte[] _bytes) throws IOException {
