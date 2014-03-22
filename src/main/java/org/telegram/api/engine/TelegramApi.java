@@ -567,6 +567,7 @@ public class TelegramApi {
                 if (currentCallback != null && currentCallback.method != null) {
                     long start = System.currentTimeMillis();
                     TLObject object = currentCallback.method.deserializeResponse(response, apiContext);
+                    Logger.d(TAG, "Telegram rpc callback: "+(object == null?"null": object.getClass().getSimpleName()));
                     Logger.d(TAG, "<< #" + +currentCallback.id + " deserialized " + object + " in " + (System.currentTimeMillis() - start) + " ms");
 
                     synchronized (currentCallback) {
