@@ -3,6 +3,7 @@ package org.telegram.api.engine;
 import org.telegram.api.TLAbsUpdates;
 import org.telegram.api.TLApiContext;
 import org.telegram.api.TLConfig;
+import org.telegram.api.TLDcOption;
 import org.telegram.api.auth.TLExportedAuthorization;
 import org.telegram.api.engine.file.Downloader;
 import org.telegram.api.engine.file.Uploader;
@@ -80,6 +81,12 @@ public class TelegramApi {
     private Downloader downloader;
 
     private Uploader uploader;
+
+    public static Injector injector;
+
+    public interface Injector {
+        void e(String tag, String message);
+    }
 
     public TelegramApi(AbsApiState state, AppInfo _appInfo, ApiCallback _apiCallback) {
         this.INSTANCE_INDEX = instanceIndex.incrementAndGet();
@@ -396,6 +403,7 @@ public class TelegramApi {
     }
 
     public boolean doSaveFilePart(long _fileId, int _filePart, byte[] _bytes) throws IOException {
+        injector.e("Telegram File", "save file part "+_fileId+"/"+_filePart+" to dc."+primaryDc);
         TLBool res = doRpcCall(
                 new TLRequestUploadSaveFilePart(_fileId, _filePart, new TLBytes(_bytes)),
                 FILE_TIMEOUT,
@@ -405,6 +413,7 @@ public class TelegramApi {
     }
 
     public boolean doSaveBigFilePart(long _fileId, int _filePart, int _totalParts, byte[] _bytes) throws IOException {
+        injector.e("Telegram File", "save big file part "+_fileId+"/"+_filePart+" to dc."+primaryDc);
         TLBool res = doRpcCall(
                 new TLRequestUploadSaveBigFilePart(_fileId, _filePart, _totalParts, new TLBytes(_bytes)),
                 FILE_TIMEOUT,
@@ -812,6 +821,10 @@ public class TelegramApi {
                     if (connectionInfo.length == 0) {
                         Logger.w(TAG, "#" + dcId + ": Unable to find proper dc config");
                         TLConfig config = doRpcCall(new TLRequestHelpGetConfig());
+                        for(TLDcOption opt: config.getDcOptions())
+                            injector.e("Telegram DC", "get dc config "+opt.getPort()+"."
+                                    +opt.getHostname()+"<"+opt.getIpAddress()+">:"
+                                    +opt.getPort());
                         state.updateSettings(config);
                         resetConnectionInfo();
                         connectionInfo = state.getAvailableConnections(dcId);
