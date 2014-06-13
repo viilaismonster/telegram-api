@@ -41,7 +41,8 @@ public class TelegramApi {
     private final int INSTANCE_INDEX;
 
     private static final int CHANNELS_MAIN = 1;
-    private static final int CHANNELS_FS = 2;
+    private static final int CHANNELS_FS = 1; // 1 desired
+//    private static final int CHANNELS_FS = 2;
 
     private static final int DEFAULT_TIMEOUT_CHECK = 15000;
     private static final int DEFAULT_TIMEOUT = 15000;
